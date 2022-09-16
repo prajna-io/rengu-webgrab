@@ -1,6 +1,4 @@
-from re import U
-import sys
-from uuid import UUID, uuid4
+from uuid import uuid4
 from datetime import date
 from io import StringIO
 
@@ -15,29 +13,35 @@ converter = HTML2Text()
 
 
 def _parse_poemhunter(soup):
-    
+
     title = soup.select(".phPageDetailsTitle")[0].get_text().strip()
     author = soup.select(".phpdAuthor > a")[0].get_text().strip()
-    body = converter.handle(str(soup.select(".phContent")[0]).replace("\u00a0", "&nbsp;")).rstrip()
+    body = converter.handle(
+        str(soup.select(".phContent")[0]).replace("\u00a0", "&nbsp;")
+    ).rstrip()
 
     return {
         "Title": title,
         "By": author,
         "Body": body,
     }
+
 
 def _parse_poetsorg(soup):
-    
+
     title = soup.select(".poem__title")[0].get_text().strip()
     author = soup.select(".card-subtitle > a")[0].get_text().strip()
-    body = converter.handle(str(soup.select(".poem__body")[0]).replace("\u00a0", "&nbsp;")).rstrip()
-    
+    body = converter.handle(
+        str(soup.select(".poem__body")[0]).replace("\u00a0", "&nbsp;")
+    ).rstrip()
+
     return {
         "Title": title,
         "By": author,
         "Body": body,
     }
-    
+
+
 def _parse_poetryfoundation(soup):
 
     title = soup.select(".c-feature-hd > h1")[0].get_text().strip()
@@ -59,11 +63,13 @@ _WEBSITES = {
     "https://www.poetryfoundation.org": _parse_poetryfoundation,
     "https://poets.org": _parse_poetsorg,
     "https://www.poets.org": _parse_poetsorg,
-    "https://www.poemhunter.com": _parse_poemhunter
-    }
+    "https://www.poemhunter.com": _parse_poemhunter,
+}
 
 _HEADERS = {
-    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/39.0.2171.95 Safari/537.36"
+    "User-Agent":   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) "
+                    "AppleWebKit/537.36 (KHTML, like Gecko) "
+                    "Chrome/39.0.2171.95 Safari/537.36"
 }
 
 
