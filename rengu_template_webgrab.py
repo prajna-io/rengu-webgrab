@@ -60,7 +60,7 @@ def _parse_poetryfoundation(soup):
     }
 
 
-def _parse_loc_poem180(soup):
+def _parse_loc_laureate(soup):
 
     title = re.sub(
         r"Poem \d{3}:",
@@ -92,7 +92,7 @@ _WEBSITES = {
     "https://poets.org": _parse_poetsorg,
     "https://www.poets.org": _parse_poetsorg,
     "https://www.poemhunter.com": _parse_poemhunter,
-    "https://www.loc.gov/programs/poetry-and-literature/poet-laureate/poet-laureate-projects/": _parse_loc_poem180,
+    "https://www.loc.gov/programs/poetry-and-literature/poet-laureate/poet-laureate-projects/": _parse_loc_laureate,
 }
 
 _HEADERS = {
