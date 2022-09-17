@@ -1,3 +1,4 @@
+import re
 from uuid import uuid4
 from datetime import date
 from io import StringIO
@@ -45,11 +46,38 @@ def _parse_poetsorg(soup):
 def _parse_poetryfoundation(soup):
 
     title = soup.select(".c-feature-hd > h1")[0].get_text().strip()
-    author = soup.select(".c-txt_attribution > a")[0].get_text().rstrip()
+    author = soup.select(".c-txt_attribution > a")[0].get_text().strip()
     body = (
         converter.handle(str(soup.select(".o-poem")[0]).replace("\u00a0", "&nbsp;"))
         .replace("\n\n", "\n")
-        .strip()
+        .rstrip()
+    )
+
+    return {
+        "Title": title,
+        "By": author,
+        "Body": body,
+    }
+
+
+def _parse_loc_poem180(soup):
+
+    title = re.sub(
+        r"Poem \d{3}:",
+        "",
+        soup.select("[id=page-title] > .smaller-h1 > span")[1].get_text(),
+    ).strip()
+    author = soup.select(".info > h2")[0].get_text().strip()
+
+    poem = soup.select(".poem > pre")
+    if not poem:
+        poem = soup.select(".poem > p")
+
+    body = (
+        converter.handle(str(poem[0]).replace("\u00a0", "&nbsp;"))
+        .replace("\n\n", "\n")
+        .replace("\n    ", "\n")
+        .rstrip()
     )
 
     return {
@@ -64,12 +92,13 @@ _WEBSITES = {
     "https://poets.org": _parse_poetsorg,
     "https://www.poets.org": _parse_poetsorg,
     "https://www.poemhunter.com": _parse_poemhunter,
+    "https://www.loc.gov/programs/poetry-and-literature/poet-laureate/poet-laureate-projects/": _parse_loc_poem180,
 }
 
 _HEADERS = {
-    "User-Agent":   "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) "
-                    "AppleWebKit/537.36 (KHTML, like Gecko) "
-                    "Chrome/39.0.2171.95 Safari/537.36"
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_10_1) "
+    "AppleWebKit/537.36 (KHTML, like Gecko) "
+    "Chrome/39.0.2171.95 Safari/537.36"
 }
 
 
