@@ -11,6 +11,7 @@ from rengu.template import RenguTemplate
 from rengu.io.yaml import RenguOutputYaml
 
 converter = HTML2Text()
+converter.ignore_links = True
 
 
 def _parse_poemhunter(soup):
@@ -87,12 +88,53 @@ def _parse_loc_laureate(soup):
     }
 
 
+def _parse_vianegativa(soup):
+
+    title = soup.select(".entry-title")[0].get_text().strip()
+    author = soup.select(".byline")[0].get_text().strip().replace("by ", "")
+
+    body = (
+        converter.handle("".join(str(soup.select(".entry-content > p"))))
+        .replace("\n\n", "\n")
+        .rstrip()
+    )
+
+    return {
+        "Title": title,
+        "By": author,
+        "Body": body,
+    }
+
+
+def _parse_americanlife(soup):
+    title = soup.select(".title-block__heading > .type-h1")[0].get_text().strip()
+    author = (
+        soup.select(".title-block__attribution > span > .type-highlight")[0]
+        .get_text()
+        .strip()
+    )
+
+    body = (
+        converter.handle(str(soup.select(".poem")[0]).replace("\u00a0", "&nbsp;"))
+        .replace("\n\n", "\n")
+        .rstrip()
+    )
+
+    return {
+        "Title": title,
+        "By": author,
+        "Body": body,
+    }
+
+
 _WEBSITES = {
     "https://www.poetryfoundation.org": _parse_poetryfoundation,
     "https://poets.org": _parse_poetsorg,
     "https://www.poets.org": _parse_poetsorg,
     "https://www.poemhunter.com": _parse_poemhunter,
     "https://www.loc.gov/programs/poetry-and-literature/poet-laureate/poet-laureate-projects/": _parse_loc_laureate,
+    "https://www.vianegativa.us": _parse_vianegativa,
+    "https://www.americanlifeinpoetry.org": _parse_americanlife,
 }
 
 _HEADERS = {
