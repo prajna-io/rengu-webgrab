@@ -93,7 +93,10 @@ def _parse_vianegativa(soup):
     title = soup.select(".entry-title")[0].get_text().strip()
     author = soup.select(".byline")[0].get_text().strip().replace("by ", "")
 
-    body = converter.handle(str(soup.select(".wp-block-verse")[0])).replace("\n\n", "\n").rstrip()
+    content = soup.select(".wp-block-verse")
+    if not content:
+        content = soup.select(".entry-content")
+    body = converter.handle(str(content[0])).replace("\n\n", "\n").rstrip()
 
     return {
         "Title": title,
