@@ -126,6 +126,38 @@ def _parse_americanlife(soup):
     }
 
 
+def _parse_greatpoets(soup):
+
+    title, author = soup.select(".asset-name")[0].get_text().split(",", 1)
+    title = title.strip().strip("'")
+
+    body = (
+        converter.handle(str(soup.select(".asset-body")[0]).replace("\u00a0", "&nbsp;"))
+        .replace("\n\n", "\n")
+        .rstrip()
+    )
+
+    return {
+        "Title": title,
+        "By": author,
+        "Body": body,
+    }
+
+
+def _parse_allpoetry(soup):
+
+    title = soup.select(".title")[0].get_text()
+    author = soup.select(".bio .media-body .u")[0].get_text()
+
+    body = soup.select(".poem_body div")[1].get_text()
+
+    return {
+        "Title": title,
+        "By": author,
+        "Body": body,
+    }
+
+
 _WEBSITES = {
     "https://www.poetryfoundation.org": _parse_poetryfoundation,
     "https://poets.org": _parse_poetsorg,
@@ -134,6 +166,8 @@ _WEBSITES = {
     "https://www.loc.gov/programs/poetry-and-literature/poet-laureate/poet-laureate-projects/": _parse_loc_laureate,
     "https://www.vianegativa.us": _parse_vianegativa,
     "https://www.americanlifeinpoetry.org": _parse_americanlife,
+    "https://greatpoets.livejournal.com": _parse_greatpoets,
+    "https://allpoetry.com": _parse_allpoetry,
 }
 
 _HEADERS = {
