@@ -128,7 +128,7 @@ def _parse_americanlife(soup):
 
 def _parse_greatpoets(soup):
 
-    title, author = soup.select(".asset-name")[0].get_text().split(",", 1)
+    author, title = soup.select(".asset-name")[0].get_text().split(",", 1)
     title = title.strip().strip("'")
 
     body = (
