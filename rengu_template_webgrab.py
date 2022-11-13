@@ -158,6 +158,19 @@ def _parse_allpoetry(soup):
     }
 
 
+def _parse_poetry_chaikhana(soup):
+    title = soup.select("#content p")[0].get_text()
+    author = soup.select("#content big a")[0].get_text()
+
+    body = converter.handle(str(soup.select("#content p big")[0]))
+
+    return {
+        "Title": title,
+        "By": author,
+        "Body": body,
+    }
+
+
 _WEBSITES = {
     "https://www.poetryfoundation.org": _parse_poetryfoundation,
     "https://poets.org": _parse_poetsorg,
@@ -168,6 +181,7 @@ _WEBSITES = {
     "https://www.americanlifeinpoetry.org": _parse_americanlife,
     "https://greatpoets.livejournal.com": _parse_greatpoets,
     "https://allpoetry.com": _parse_allpoetry,
+    "https://poetry-chaikhana.com": _parse_poetry_chaikhana,
 }
 
 _HEADERS = {
