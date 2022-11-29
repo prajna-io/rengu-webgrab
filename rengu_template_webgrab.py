@@ -128,8 +128,13 @@ def _parse_americanlife(soup):
 
 def _parse_greatpoets(soup):
 
-    author, title = soup.select(".asset-name")[0].get_text().split(",", 1)
-    title = title.strip().strip("'")
+    try:
+        author, title = soup.select(".asset-name")[0].get_text().split(",", 1)
+    except ValueError:
+        tagline = soup.select(".asset-name")[0].get_text()
+        index_by = tagline.index(" by ")
+        title = tagline[:index_by].strip()
+        author = tagline[index_by + 4 :].strip()
 
     body = (
         converter.handle(str(soup.select(".asset-body")[0]).replace("\u00a0", "&nbsp;"))
