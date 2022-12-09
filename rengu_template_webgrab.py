@@ -14,6 +14,21 @@ converter = HTML2Text()
 converter.ignore_links = True
 
 
+def _parse_poetrysociety(soup):
+
+    title = soup.select(".entry-title")[0].get_text().strip()
+    author = soup.select(".entry-header > h3 > a")[0].get_text().strip()
+    body = converter.handle(
+        str(soup.select(".entry-content")[0]).replace("\u00a0", "&nbsp;")
+    ).rstrip()
+
+    return {
+        "Title": title,
+        "By": author,
+        "Body": body,
+    }
+
+
 def _parse_poemhunter(soup):
 
     title = soup.select(".phPageDetailsTitle")[0].get_text().strip()
@@ -187,6 +202,7 @@ _WEBSITES = {
     "https://greatpoets.livejournal.com": _parse_greatpoets,
     "https://allpoetry.com": _parse_allpoetry,
     "https://poetry-chaikhana.com": _parse_poetry_chaikhana,
+    "https://poems.poetrysociety.org.uk": _parse_poetrysociety,
 }
 
 _HEADERS = {
