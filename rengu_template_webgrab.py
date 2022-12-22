@@ -1,6 +1,6 @@
 import re
 from uuid import uuid4
-from datetime import date
+from datetime import datetime
 from io import StringIO
 
 from html2text import HTML2Text
@@ -229,7 +229,15 @@ class RenguTemplateWebgrab(RenguTemplate):
                     break
 
             if not method:
-                yaml_out = yaml_out + f"---\n__ERROR: No handler for {url}"
+                yaml_out = f"""---
+Category: fragment
+Source:
+    URL: {url}
+    Date: '{datetime.now():%Y%m%d}'
+Format: verse
+## ERROR: No handler for {url}
+---
+"""
                 break
 
             page = requests.get(url, headers=_HEADERS)
@@ -239,7 +247,7 @@ class RenguTemplateWebgrab(RenguTemplate):
                 "ID": str(uuid4()),
                 "Category": "fragment",
                 "Format": "verse",
-                "Source": {"URL": url, "Date": date.today().strftime("%Y%m%d")},
+                "Source": {"URL": url, "Date": f"{datetime.now():%Y%m%d}"},
             }
 
             yaml_stream = StringIO()
